@@ -7,7 +7,7 @@ import streamlit as st
 # extracting data from yahoo finance
 st.title("Stock Prediction on Realtime Data")
 start="2012-01-01"
-end=st.text_input("Enter last closing day","2022-06-24")
+end=st.text_input("Enter last closing day")
 compname=st.text_input("Enter Stock Ticker",'AAPL')
 df=data.DataReader(compname,"yahoo",start,end)
    
@@ -63,10 +63,11 @@ model.add(LSTM(50,return_sequences=True))
 model.add(LSTM(50))
 model.add(Dense(1))
 model.compile(loss='mean_squared_error',optimizer='adam')
-model.fit(X_train,y_train,validation_data=(X_test,ytest),epochs=50,batch_size=15,verbose=1)
+model.fit(X_train,y_train,validation_data=(X_test,ytest),epochs=30,batch_size=15,verbose=1)
 # extracting the last index to get the test input
-k=std_2[std_2["Date"]==str(end)].index.values
-x=k[0]
+# k=std_2[std_2["Date"]==str(end)].index.values
+# x=k[0]
+x=len(df1)
 new_set=std_2.iloc[x-15:x,:]
 l=np.array(new_set[["Close"]])
 x_input=scaler.fit_transform(l).reshape(1,-1) 
@@ -83,12 +84,12 @@ while(i<7):
     if(len(temp_input)>15):
         #print(temp_input)
         x_input=np.array(temp_input[1:])
-        print("{} day input {}".format(i,x_input))
+        # print("{} day input {}".format(i,x_input))
         x_input=x_input.reshape(1,-1)
         x_input = x_input.reshape((1, n_steps, 1))
         #print(x_input)
         yhat = model.predict(x_input, verbose=0)
-        print("{} day output {}".format(i,yhat))
+        # print("{} day output {}".format(i,yhat))
         temp_input.extend(yhat[0].tolist())
         temp_input=temp_input[1:]
         #print(temp_input)
@@ -97,23 +98,22 @@ while(i<7):
     else:
         x_input = x_input.reshape((1, n_steps,1))
         yhat = model.predict(x_input, verbose=0)
-        print(yhat[0])
+        # print(yhat[0])
         temp_input.extend(yhat[0].tolist())
-        print(len(temp_input))
+        # print(len(temp_input))
         lst_output.extend(yhat.tolist())
         i=i+1
-
+st.subheader("Next 7-days prediction")
 st.write(scaler.inverse_transform(lst_output))
-tildate=len(df1)
+day_new=np.arange(1,16)
+day_pred=np.arange(16,23)
 st.subheader("Prediction results")
 fig=plt.figure(figsize=(16,8))
 ## Plotting 
 # shift train predictions for plotting
-day_new=np.arange(1,16)
-day_pred=np.arange(16,23)
 plt.xlabel("No.of days")
 plt.ylabel("Close price of next 7 days")
-plt.plot(day_new,scaler.inverse_transform(df1[tildate-15:]))
+plt.plot(day_new,l)
 plt.plot(day_pred,scaler.inverse_transform(lst_output))
 st.pyplot(fig)
 
@@ -123,5 +123,5 @@ df3=df1.tolist()
 df3.extend(lst_output)
 plt.xlabel("days")
 plt.ylabel("Close price including  next 7 days")
-plt.plot(scaler.inverse_transform(df3[tildate-20:]))
+plt.plot((scaler.inverse_transform(df3[x-25:])))
 st.pyplot(fig)
