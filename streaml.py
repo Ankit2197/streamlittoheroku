@@ -7,7 +7,7 @@ import streamlit as st
 # extracting data from yahoo finance
 st.title("Stock Prediction on Realtime Data")
 start="2012-01-01"
-end=st.text_input("Enter last closing day")
+end=st.text_input("Enter last closing day","2022-06-24")
 compname=st.text_input("Enter Stock Ticker",'AAPL')
 df=data.DataReader(compname,"yahoo",start,end)
    
