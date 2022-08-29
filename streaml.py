@@ -63,7 +63,7 @@ model.add(LSTM(50,return_sequences=True))
 model.add(LSTM(50))
 model.add(Dense(1))
 model.compile(loss='mean_squared_error',optimizer='adam')
-model.fit(X_train,y_train,validation_data=(X_test,ytest),epochs=05,batch_size=15,verbose=1)
+# model.fit(X_train,y_train,validation_data=(X_test,ytest),epochs=05,batch_size=15,verbose=1)
 # extracting the last index to get the test input
 # k=std_2[std_2["Date"]==str(end)].index.values
 # x=k[0]
